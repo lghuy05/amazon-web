@@ -4,8 +4,6 @@ import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 import { formatCurrency } from '../utils/money.js';
 import { deliveryOptions } from '../data/deliveryOptions.js';
 
-const today = dayjs();
-const deliveryDate = today.add(7, 'days');
 let cartSummaryHTML = '';
 cart.forEach((cartItem) => {
   const productId = cartItem.productId;
@@ -15,11 +13,23 @@ cart.forEach((cartItem) => {
       matchingproducts = item;
     }
   });
+  const deliveryOptionId = cartItem.deliveryOptionsId;
+  let deliveryOption;
+  deliveryOptions.forEach((option) => {
+    if (option.id === deliveryOptionId) {
+      deliveryOption = option;
+    }
+  });
+  const today = dayjs();
+  const deliveryDate = today.add(
+    deliveryOption.deliveryDays, 'days'
+  );
+  const dateString = deliveryDate.format('dddd, MMMM D');
   if (matchingproducts) {
     cartSummaryHTML += ` 
 <div class="cart-item-container js-item-container-${matchingproducts.id}">
   <div class="delivery-date">
-    Delivery date: Wednesday, June 15
+    Delivery date: ${dateString}
   </div>
 
   <div class="cart-item-details-grid">
@@ -67,7 +77,7 @@ function deliveryOptionsHTML(matchingproducts, cartItem) {
     const priceString = deliveryOption.priceCents
       === 0
       ? 'FREE' : `$${formatCurrency(deliveryOption.priceCents)} -`;
-    const isChecked = deliveryOptions.id === cartItem.deliveryOptionId;
+    const isChecked = deliveryOption.id === cartItem.deliveryOptionsId;
     html +=
       `
       <div class="delivery-option">
