@@ -1,4 +1,4 @@
-import { cart, removefromCart, savetoStorage } from '../data/cart.js';
+import { cart, removefromCart, savetoStorage, updateDeliveryOption } from '../data/cart.js';
 import { products } from '../data/products.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 import { formatCurrency } from '../utils/money.js';
@@ -7,12 +7,14 @@ import { deliveryOptions } from '../data/deliveryOptions.js';
 let cartSummaryHTML = '';
 cart.forEach((cartItem) => {
   const productId = cartItem.productId;
+
   let matchingproducts;
   products.forEach((item) => {
     if ((item.id) === productId) {
       matchingproducts = item;
     }
   });
+
   const deliveryOptionId = cartItem.deliveryOptionsId;
   let deliveryOption;
   deliveryOptions.forEach((option) => {
@@ -20,11 +22,15 @@ cart.forEach((cartItem) => {
       deliveryOption = option;
     }
   });
+
   const today = dayjs();
+
   const deliveryDate = today.add(
     deliveryOption.deliveryDays, 'days'
   );
+
   const dateString = deliveryDate.format('dddd, MMMM D');
+
   if (matchingproducts) {
     cartSummaryHTML += ` 
 <div class="cart-item-container js-item-container-${matchingproducts.id}">
@@ -80,7 +86,7 @@ function deliveryOptionsHTML(matchingproducts, cartItem) {
     const isChecked = deliveryOption.id === cartItem.deliveryOptionsId;
     html +=
       `
-      <div class="delivery-option">
+      <div class="delivery-option js-delivery-option" data-product-id="${matchingproducts.id}" data-delivery-option-id="${deliveryOption.id}">
         <input type="radio" ${isChecked ? 'checked' : ''} class="delivery-option-input" name="delivery-option-${matchingproducts.id}">
         <div>
           <div class="delivery-option-date">
@@ -102,5 +108,12 @@ document.querySelectorAll('.js-delete-link').forEach((link) => {
     removefromCart(productId);
     const container = document.querySelector(`.js-item-container-${productId}`);
     container.remove();
+  });
+});
+
+document.querySelectorAll('.js-delivery-option').forEach((element) => {
+  element.addEventListener('click', () => {
+    const { productId, deliveryOptionId } = element.dataset;
+    updateDeliveryOption(productId, deliveryOptionId);
   })
 })

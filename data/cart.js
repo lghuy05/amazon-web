@@ -32,3 +32,13 @@ export function removefromCart(productId) {
 export function savetoStorage() {
   localStorage.setItem('cart', JSON.stringify(cart));
 }
+export function updateDeliveryOption(productId, deliveryOptionsId) {
+  let matchingItem;
+  cart.forEach((cartItem) => {
+    if (productId === cartItem.productId) {
+      matchingItem = cartItem;
+    }
+  });
+  matchingItem.deliveryOptionsId = deliveryOptionsId;
+  savetoStorage();
+}
