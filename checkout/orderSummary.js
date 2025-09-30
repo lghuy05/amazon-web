@@ -3,6 +3,7 @@ import { products, getProducts } from '../data/products.js';
 import dayjs from 'https://unpkg.com/supersimpledev@8.5.0/dayjs/esm/index.js';
 import { formatCurrency } from '../utils/money.js';
 import { deliveryOptions, getDeliveryOption } from '../data/deliveryOptions.js';
+import { renderPaymentSummary } from './paymentSummary.js';
 
 export function rendering() {
   let cartSummaryHTML = '';
@@ -21,6 +22,7 @@ export function rendering() {
     );
 
     const dateString = deliveryDate.format('dddd, MMMM D');
+
 
     if (matchingproducts) {
       cartSummaryHTML += ` 
@@ -107,6 +109,7 @@ export function rendering() {
       const { productId, deliveryOptionId } = element.dataset;
       updateDeliveryOption(productId, deliveryOptionId);
       rendering();
+      renderPaymentSummary();
     })
   })
 }
