@@ -11,6 +11,7 @@ export function addtoCart(productId) {
       flag = true;
     }
   })
+
   if (!flag) {
     cart.push({ productId: productId, quantity: 1, deliveryOptionsId: '1' });
 
