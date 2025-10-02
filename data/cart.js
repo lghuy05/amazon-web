@@ -1,6 +1,12 @@
-export let cart = JSON.parse(localStorage.getItem('cart'));
-if (!cart) {
-  cart = [];
+export let cart;
+
+loadfromStorage();
+
+export function loadfromStorage() {
+  cart = JSON.parse(localStorage.getItem('cart'));
+  if (!cart) {
+    cart = [];
+  }
 }
 
 export function addtoCart(productId) {
